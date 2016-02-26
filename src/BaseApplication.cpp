@@ -44,7 +44,7 @@ void BaseApplication::destroyWindow() {
 }
 
 void BaseApplication::run() {
-
+	//glClearColor(0,0,0,0);
 	double prevTime = glfwGetTime();
 	double currTime = 0;
 

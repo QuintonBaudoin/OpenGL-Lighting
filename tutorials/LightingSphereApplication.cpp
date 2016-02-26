@@ -41,12 +41,13 @@ bool LightingSphereApplication::startup() {
 	// set up light (direction updates each frame)
 	m_directionalLight.diffuse = vec3(1);
 	m_directionalLight.specular = vec3(1);
+	m_directionalLight.postion = vec3(10);
 	m_ambientLight = vec3(1);
 
 	// set up material
-	m_material.diffuse = vec3(0,1,0);
+	m_material.diffuse = vec3(1);
 	m_material.ambient = vec3(.1);
-	m_material.specular = vec3(0,0,1);
+	m_material.specular = vec3(1);
 	m_material.specularPower = 10;
 
 	// generate a sphere with radius 5
@@ -91,35 +92,51 @@ void LightingSphereApplication::shutdown() {
 
 bool LightingSphereApplication::update(float deltaTime) {
 	
+	glClearColor(0, 0, 0, 0);
+
+
+
+
+
 	// close the application if the window closes or we press escape
 	if (glfwWindowShouldClose(m_window) ||
 		glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		return false;
 
-	if (glfwGetKey(m_window, GLFW_KEY_KP_7) == GLFW_PRESS)
+	if (glfwGetKey(m_window, GLFW_KEY_KP_9) == GLFW_PRESS)
 		m_material.specularPower++;
 
-	if (glfwGetKey(m_window, GLFW_KEY_KP_9) == GLFW_PRESS)
+	if (glfwGetKey(m_window, GLFW_KEY_KP_7) == GLFW_PRESS)
 	{
 		if (m_material.specularPower > 1)
 		    m_material.specularPower--;
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_KP_4) == GLFW_PRESS)
+	if (glfwGetKey(m_window, GLFW_KEY_KP_6) == GLFW_PRESS)
 		m_material.diffuse += vec3(.01);
 
-	if (glfwGetKey(m_window, GLFW_KEY_KP_6) == GLFW_PRESS)
+	if (glfwGetKey(m_window, GLFW_KEY_KP_4) == GLFW_PRESS)
 	{
-		if (m_material.diffuse.x > 0)
+		if (m_material.diffuse.y > 0)
 			m_material.diffuse -= vec3(.01);
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_KP_1) == GLFW_PRESS)
+	if (glfwGetKey(m_window, GLFW_KEY_KP_3) == GLFW_PRESS)
 		m_material.ambient += vec3(.01);
 
-	if (glfwGetKey(m_window, GLFW_KEY_KP_3) == GLFW_PRESS)
+	if (glfwGetKey(m_window, GLFW_KEY_KP_1) == GLFW_PRESS)
 	{
 		if (m_material.ambient.x > 0)
 			m_material.ambient -= vec3(.01);
 	}
+
+	if (glfwGetKey(m_window, GLFW_KEY_KP_8) == GLFW_PRESS)
+		m_material.specular += vec3(.01);
+
+	if (glfwGetKey(m_window, GLFW_KEY_KP_2) == GLFW_PRESS)
+	{
+		if (m_material.specular.x > 0)
+			m_material.specular -= vec3(.01);
+	}
+
 
 	// update the camera's movement
 	m_camera->update(deltaTime);
@@ -135,12 +152,12 @@ bool LightingSphereApplication::update(float deltaTime) {
 	vec4 black(0, 0, 0, 1);
 
 	// for now let's add a grid to the gizmos
-	for (int i = 0; i < 21; ++i) {
-		Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
-						i == 10 ? white : black);
-		Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
-						i == 10 ? white : black);
-	}
+	//for (int i = 0; i < 21; ++i) {
+	//	Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
+	//					i == 10 ? white : black);
+	//	Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
+	//					i == 10 ? white : black);
+	//}
 
 	Gizmos::addTransform(mat4(1));
 
@@ -187,6 +204,9 @@ void LightingSphereApplication::draw() {
 	// bind ambient light
 	lightUniform = m_shader->getUniform("Ia");
 	glUniform3fv(lightUniform, 1, &m_ambientLight[0]);
+	
+	lightUniform = m_shader->getUniform("lightPosition");
+	glUniform3fv(lightUniform, 1, &m_directionalLight.postion[0]);
 
 	// bind camera position for specular calculation
 	int cameraUniform = m_shader->getUniform("cameraPosition");
@@ -208,6 +228,9 @@ void LightingSphereApplication::draw() {
 	// draw mesh as a triangle mesh
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0);
+
+
+
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());

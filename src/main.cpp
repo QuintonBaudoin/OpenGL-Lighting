@@ -5,7 +5,7 @@
 int main() {
 	
 	// change startup application
-	BaseApplication* app = new LightingSphereApplication();
+	BaseApplication* app = new LightingOBJApplication();
 	if (app->startup())
 		app->run();
 	app->shutdown();
