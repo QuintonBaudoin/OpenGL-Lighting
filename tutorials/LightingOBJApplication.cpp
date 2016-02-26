@@ -87,6 +87,8 @@ bool LightingOBJApplication::update(float deltaTime) {
 		glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		return false;
 
+
+
 	// update the camera's movement
 	m_camera->update(deltaTime);
 

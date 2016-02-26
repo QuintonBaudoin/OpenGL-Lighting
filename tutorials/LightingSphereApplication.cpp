@@ -44,15 +44,16 @@ bool LightingSphereApplication::startup() {
 	m_ambientLight = vec3(1);
 
 	// set up material
-	m_material.diffuse = vec3(1);
-	m_material.ambient = vec3(1);
-	m_material.specular = vec3(1);
-	m_material.specularPower = 0;
+	m_material.diffuse = vec3(0,1,0);
+	m_material.ambient = vec3(.1);
+	m_material.specular = vec3(0,0,1);
+	m_material.specularPower = 10;
 
 	// generate a sphere with radius 5
 	generateSphere(32, 32, m_vao, m_vbo, m_ibo, m_indexCount);
 	m_modelMatrix = glm::scale(vec3(5));
-		
+
+
 	// load a shader
 	m_shader = new Shader();
 	if (m_shader->loadShader(GL_VERTEX_SHADER, "./shaders/phong.vert") == false) {
@@ -95,6 +96,31 @@ bool LightingSphereApplication::update(float deltaTime) {
 		glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		return false;
 
+	if (glfwGetKey(m_window, GLFW_KEY_KP_7) == GLFW_PRESS)
+		m_material.specularPower++;
+
+	if (glfwGetKey(m_window, GLFW_KEY_KP_9) == GLFW_PRESS)
+	{
+		if (m_material.specularPower > 1)
+		    m_material.specularPower--;
+	}
+	if (glfwGetKey(m_window, GLFW_KEY_KP_4) == GLFW_PRESS)
+		m_material.diffuse += vec3(.01);
+
+	if (glfwGetKey(m_window, GLFW_KEY_KP_6) == GLFW_PRESS)
+	{
+		if (m_material.diffuse.x > 0)
+			m_material.diffuse -= vec3(.01);
+	}
+	if (glfwGetKey(m_window, GLFW_KEY_KP_1) == GLFW_PRESS)
+		m_material.ambient += vec3(.01);
+
+	if (glfwGetKey(m_window, GLFW_KEY_KP_3) == GLFW_PRESS)
+	{
+		if (m_material.ambient.x > 0)
+			m_material.ambient -= vec3(.01);
+	}
+
 	// update the camera's movement
 	m_camera->update(deltaTime);
 
@@ -105,7 +131,7 @@ bool LightingSphereApplication::update(float deltaTime) {
 	// clear the gizmos and add a transform and grid
 	Gizmos::clear();
 
-	vec4 white(1, 1, 1, 0);
+	vec4 white(1, 1, 1, 1);
 	vec4 black(0, 0, 0, 1);
 
 	// for now let's add a grid to the gizmos
