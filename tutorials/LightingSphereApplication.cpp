@@ -41,13 +41,13 @@ bool LightingSphereApplication::startup() {
 	// set up light (direction updates each frame)
 	m_directionalLight.diffuse = vec3(1);
 	m_directionalLight.specular = vec3(1);
-	m_ambientLight = vec3(0.25f);
+	m_ambientLight = vec3(1);
 
 	// set up material
 	m_material.diffuse = vec3(1);
 	m_material.ambient = vec3(1);
 	m_material.specular = vec3(1);
-	m_material.specularPower = 64;
+	m_material.specularPower = 0;
 
 	// generate a sphere with radius 5
 	generateSphere(32, 32, m_vao, m_vbo, m_ibo, m_indexCount);

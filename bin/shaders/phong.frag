@@ -22,24 +22,32 @@ out vec4 FragColour;
 
 void main() {
 	
-	// ensure normal and light direction are normalised
-	vec3 N = normalize(vNormal).xyz;
-	vec3 L = normalize(lightDirection);
+	vec3 A = normalize(vNormal.xyz);
+	vec3 B = normalize(lightDirection);
+	vec3 C = cameraPosition-vPosition.xyz;
+	
+	C = C/sqrt(C.x * C.x + C.y * C.y + C.z * C.z);
 
-	// calculate lambert term (negate light direction so we get direction the light is coming from)
-	float lambertTerm = max( 0, dot( N, -L ) );
+	float dotProd = A.x * B.x + A.y * B.y + A.z * B.z;
 
-	// calculate view vector and reflection vector
-	vec3 V = normalize(cameraPosition - vPosition.xyz);
-	vec3 R = reflect( L, N );
 
-	// calculate specular term
-	float specularTerm = pow( max( 0, dot( R, V ) ), specularPower );
+	vec3 D = (2 * dotProd * A) - B;
 
-	// calculate each light property
-	vec3 ambient = Ia * Ka;
-	vec3 diffuse = Id * Kd * lambertTerm;
-	vec3 specular = Is * Ks * specularTerm;
+	vec3 Diffuse = Kd * dotProd * Id;
+	vec3 Ambient = Ka * Ia;
 
-	FragColour = vec4( ambient + diffuse + specular, 1);
+
+	float refDotProd = D.x * C.x + D.y * C.y + D.z * C.z;
+	vec3 Spec = Ks * pow(refDotProd,1) * Is;
+	
+	//Diffuse = vec3(0);
+	//Ambient = vec3(0);
+	//Spec = vec3(0);
+
+
+	vec3 Total = Diffuse + Ambient + Spec;
+
+	
+
+	FragColour = vec4(Total.xyz, 1);
 }
